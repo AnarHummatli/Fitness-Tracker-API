@@ -1,5 +1,6 @@
 package com.fitness.fitnesstrackerapi.controller;
 
+import com.fitness.fitnesstrackerapi.dto.LoginRequest;
 import com.fitness.fitnesstrackerapi.model.User;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,13 @@ public class UserController {
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         User createdUser = userService.registerUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest) {
+        User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        return ResponseEntity.ok(user);
     }
 }
