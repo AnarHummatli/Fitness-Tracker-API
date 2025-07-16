@@ -1,6 +1,6 @@
 package com.fitness.fitnesstrackerapi.service.impl;
 
-import com.fitness.fitnesstrackerapi.model.User;
+import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.repository.UserRepository;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import lombok.RequiredArgsConstructor;

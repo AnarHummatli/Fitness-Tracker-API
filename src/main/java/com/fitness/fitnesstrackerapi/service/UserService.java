@@ -1,6 +1,6 @@
 package com.fitness.fitnesstrackerapi.service;
 
-import com.fitness.fitnesstrackerapi.model.User;
+import com.fitness.fitnesstrackerapi.model.entity.User;
 
 import java.util.Optional;
 

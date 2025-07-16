@@ -1,6 +1,6 @@
 package com.fitness.fitnesstrackerapi.repository;
 
-import com.fitness.fitnesstrackerapi.model.User;
+import com.fitness.fitnesstrackerapi.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

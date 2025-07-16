@@ -1,4 +1,4 @@
-package com.fitness.fitnesstrackerapi.model;
+package com.fitness.fitnesstrackerapi.model.entity;
 
 public enum Gender {
     MALE,

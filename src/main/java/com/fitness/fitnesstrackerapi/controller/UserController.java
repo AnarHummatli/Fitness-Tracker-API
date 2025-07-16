@@ -1,7 +1,7 @@
 package com.fitness.fitnesstrackerapi.controller;
 
-import com.fitness.fitnesstrackerapi.dto.LoginRequest;
-import com.fitness.fitnesstrackerapi.model.User;
+import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
+import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,6 @@ public class UserController {
     public ResponseEntity<User> loginUser(@RequestBody LoginRequest loginRequest) {
         User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-
         return ResponseEntity.ok(user);
     }
 }
