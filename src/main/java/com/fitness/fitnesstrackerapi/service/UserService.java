@@ -1,11 +1,10 @@
 package com.fitness.fitnesstrackerapi.service;
 
-import com.fitness.fitnesstrackerapi.model.entity.User;
-
-import java.util.Optional;
+import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
+import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
+import com.fitness.fitnesstrackerapi.model.dto.UserResponse;
 
 public interface UserService {
-    User registerUser(User user);
-    Optional<User> findByEmail(String email);
-    Optional<User> login(String email, String password);
+    UserResponse registerUser(RegisterRequest registerRequest);
+    UserResponse loginUser(LoginRequest loginRequest);
 }

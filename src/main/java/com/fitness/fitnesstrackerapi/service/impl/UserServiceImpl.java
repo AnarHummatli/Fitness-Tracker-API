@@ -1,9 +1,15 @@
 package com.fitness.fitnesstrackerapi.service.impl;
 
+import com.fitness.fitnesstrackerapi.exception.EmailAlreadyExistsException;
+import com.fitness.fitnesstrackerapi.exception.InvalidCredentialsException;
+import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
+import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
+import com.fitness.fitnesstrackerapi.model.dto.UserResponse;
 import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.repository.UserRepository;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,37 +18,64 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Override
-    public User registerUser(User user) {
-        if (user.getPassword() == null || user.getPassword().length() < 8) {
+    public UserResponse registerUser(RegisterRequest registerRequest) {
+        String password = registerRequest.getPassword();
+        if (password == null || password.length() < 8) {
             throw new RuntimeException("Password must be at least 8 characters");
         }
+        String encodedPassword = passwordEncoder.encode(password);
 
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new EmailAlreadyExistsException("Email already in use");
         }
-        return userRepository.save(user);
+
+        User user = new User(
+                null,
+                registerRequest.getFirstName(),
+                registerRequest.getLastName(),
+                registerRequest.getEmail(),
+                encodedPassword,
+                registerRequest.getAge(),
+                registerRequest.getGender(),
+                registerRequest.getHeight(),
+                registerRequest.getWeight()
+        );
+
+        User savedUser = userRepository.save(user);
+        return mapToUserResponse(savedUser);
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
-    public Optional<User> login(String email, String password) {
-        Optional<User> existingUser = userRepository.findByEmail(email);
-        if (!existingUser.isPresent()) {
-            throw new RuntimeException("User not found");
+    public UserResponse loginUser(LoginRequest loginRequest) {
+        Optional<User> existingUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (existingUser.isEmpty()) {
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
         User user = existingUser.get();
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
         }
-        return Optional.of(user);
+
+        return mapToUserResponse(user);
     }
+
+    private UserResponse mapToUserResponse(User user) {
+        return new UserResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getAge(),
+                user.getGender(),
+                user.getHeight(),
+                user.getWeight()
+        );
+    }
+
 }
