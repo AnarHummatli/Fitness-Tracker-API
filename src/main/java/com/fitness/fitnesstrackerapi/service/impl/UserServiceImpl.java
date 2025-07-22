@@ -29,8 +29,7 @@ public class UserServiceImpl implements UserService {
         }
         String encodedPassword = passwordEncoder.encode(password);
 
-        Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
-        if (existingUser.isPresent()) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new EmailAlreadyExistsException("Email already in use");
         }
 

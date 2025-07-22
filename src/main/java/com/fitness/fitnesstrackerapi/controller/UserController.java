@@ -3,7 +3,6 @@ package com.fitness.fitnesstrackerapi.controller;
 import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
 import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
 import com.fitness.fitnesstrackerapi.model.dto.UserResponse;
-import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         UserResponse user = userService.loginUser(loginRequest);
         return ResponseEntity.ok(user);
     }

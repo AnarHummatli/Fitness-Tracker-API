@@ -40,6 +40,7 @@ public class User {
     @Min(8)
     @Max(100)
     @NotNull
+    @Positive
     @Column(nullable = false)
     private Integer age;
 

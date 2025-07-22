@@ -1,6 +1,10 @@
 server:
   port: 8080
 spring:
+  security:
+    user:
+      name: Anar
+      password: 1234
   datasource:
     url: jdbc:postgresql://localhost:5432/fitnessdb
     username: postgres

@@ -24,6 +24,7 @@ public class RegisterRequest {
     @Min(8)
     @Max(100)
     @NotNull
+    @Positive
     private Integer age;
 
     @NotNull
