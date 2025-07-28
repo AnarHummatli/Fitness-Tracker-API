@@ -1,8 +1,8 @@
 package com.fitness.fitnesstrackerapi.controller;
 
+import com.fitness.fitnesstrackerapi.model.dto.AuthResponse;
 import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
 import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
-import com.fitness.fitnesstrackerapi.model.dto.UserResponse;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody @Valid RegisterRequest request) {
-        UserResponse registeredUser = userService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
+        String token = userService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
-        UserResponse user = userService.loginUser(loginRequest);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody @Valid LoginRequest loginRequest) {
+        String token = userService.loginUser(loginRequest);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
