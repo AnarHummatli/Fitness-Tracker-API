@@ -53,8 +53,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         WorkoutSession savedSession = workoutSessionRepository.save(workoutSession);
 
         List<WorkoutEntry> entries = request.getEntries().stream().map(workoutEntryRequest -> {
-            Exercise exercise = exerciseRepository.findById(workoutEntryRequest.getExerciseId()).orElseThrow(() ->
-                    new ResourceNotFoundException("Exercise", workoutEntryRequest.getExerciseId()));
+            Exercise exercise = exerciseRepository.findByNameAndUser(workoutEntryRequest.getExerciseName(), user)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Exercise", workoutEntryRequest.getExerciseName()));
+
             return WorkoutEntry.builder()
                     .workoutSession(savedSession)
                     .exercise(exercise)

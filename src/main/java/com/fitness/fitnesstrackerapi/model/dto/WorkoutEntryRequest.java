@@ -1,6 +1,7 @@
 package com.fitness.fitnesstrackerapi.model.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
@@ -8,8 +9,8 @@ import lombok.Data;
 @Data
 public class WorkoutEntryRequest {
 
-    @NotNull
-    private Long exerciseId;
+    @NotBlank
+    private String exerciseName;
 
     @NotNull
     @Min(1)
