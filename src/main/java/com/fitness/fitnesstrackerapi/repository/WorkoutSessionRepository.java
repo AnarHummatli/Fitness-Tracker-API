@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, Long> {
     List<WorkoutSession> findByUserAndDate(User user, LocalDate date);
+    List<WorkoutSession> findByUser(User user);
 }

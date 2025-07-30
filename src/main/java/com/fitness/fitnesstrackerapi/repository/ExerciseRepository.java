@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     List<Exercise> findAllByUser(User user);
     Optional<Exercise> findByNameAndUser(String name, User user);
+    boolean existsByNameAndUser(String name, User user);
 }

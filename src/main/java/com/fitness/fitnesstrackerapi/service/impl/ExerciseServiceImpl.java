@@ -26,6 +26,10 @@ public class ExerciseServiceImpl implements ExerciseService {
 
         User user = getCurrentUser();
 
+        if (exerciseRepository.existsByNameAndUser(request.getName(), user)) {
+            throw new IllegalArgumentException("You already created an exercise with this name");
+        }
+        
         Exercise exercise = new Exercise();
         exercise.setName(request.getName());
         exercise.setDescription(request.getDescription());

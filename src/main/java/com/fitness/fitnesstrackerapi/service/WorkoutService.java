@@ -11,4 +11,5 @@ public interface WorkoutService {
     WorkoutSessionResponse markWorkoutAsCompleted(Long sessionId);
     List<WorkoutSessionResponse> getWorkoutsByDate(LocalDate date);
     void deleteWorkoutById(Long sessionId);
+    List<WorkoutSessionResponse> getAllWorkouts();
 }

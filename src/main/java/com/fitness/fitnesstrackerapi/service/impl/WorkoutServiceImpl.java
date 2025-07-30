@@ -30,11 +30,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     @Transactional
     @Override
     public WorkoutSessionResponse createWorkoutSession(WorkoutSessionRequest request) {
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        User user = getCurrentUser();
 
         WorkoutSessionStatus status;
         LocalDate today = LocalDate.now();
@@ -53,49 +49,29 @@ public class WorkoutServiceImpl implements WorkoutService {
 
         WorkoutSession savedSession = workoutSessionRepository.save(workoutSession);
 
-        List<WorkoutEntry> entries = request.getEntries().stream().map(workoutEntryRequest -> {
-            Exercise exercise = exerciseRepository.findByNameAndUser(workoutEntryRequest.getExerciseName(), user)
+        List<WorkoutEntry> entries = request.getEntries().stream().map(entry -> {
+            Exercise exercise = exerciseRepository.findByNameAndUser(entry.getExerciseName(), user)
                     .orElseThrow(() ->
-                            new ResourceNotFoundException("Exercise", "name", workoutEntryRequest.getExerciseName()));
-
+                            new ResourceNotFoundException("Exercise", "name", entry.getExerciseName()));
             return WorkoutEntry.builder()
                     .workoutSession(savedSession)
                     .exercise(exercise)
-                    .sets(workoutEntryRequest.getSets())
-                    .reps(workoutEntryRequest.getReps())
-                    .weight(workoutEntryRequest.getWeight())
+                    .sets(entry.getSets())
+                    .reps(entry.getReps())
+                    .weight(entry.getWeight())
                     .build();
         }).toList();
 
         workoutEntryRepository.saveAll(entries);
         savedSession.setWorkoutEntries(entries);
 
-        List<WorkoutEntryResponse> workoutEntryResponses = entries.stream().map(entry ->
-                new WorkoutEntryResponse(
-                        entry.getExercise().getName(),
-                        entry.getSets(),
-                        entry.getReps(),
-                        entry.getWeight()
-                )
-        ).toList();
-
-        return new WorkoutSessionResponse(
-                savedSession.getId(),
-                savedSession.getDate(),
-                savedSession.getWorkoutSessionStatus(),
-                workoutEntryResponses
-        );
-
+        return mapToWorkoutSessionResponse(savedSession);
     }
 
     @Transactional
     @Override
     public WorkoutSessionResponse markWorkoutAsCompleted(Long sessionId) {
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        User user = getCurrentUser();
 
         WorkoutSession session = workoutSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", "id", sessionId));
@@ -111,60 +87,21 @@ public class WorkoutServiceImpl implements WorkoutService {
         session.setWorkoutSessionStatus(WorkoutSessionStatus.COMPLETED);
         workoutSessionRepository.save(session);
 
-        List<WorkoutEntryResponse> entryResponses = session.getWorkoutEntries().stream().map(entry ->
-                new WorkoutEntryResponse(
-                        entry.getExercise().getName(),
-                        entry.getSets(),
-                        entry.getReps(),
-                        entry.getWeight()
-                )).toList();
-
-        return new WorkoutSessionResponse(
-                session.getId(),
-                session.getDate(),
-                session.getWorkoutSessionStatus(),
-                entryResponses
-        );
-
+        return mapToWorkoutSessionResponse(session);
     }
 
     @Override
     public List<WorkoutSessionResponse> getWorkoutsByDate(LocalDate date) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
-
+        User user = getCurrentUser();
         List<WorkoutSession> sessions = workoutSessionRepository.findByUserAndDate(user, date);
 
-        if (sessions.isEmpty()) {
-            throw new ResourceNotFoundException("WorkoutSession", "id", date.toString());
-        }
-
-        return sessions.stream().map(session -> {
-            List<WorkoutEntryResponse> entryResponses = session.getWorkoutEntries().stream().map(entry ->
-                    new WorkoutEntryResponse(
-                            entry.getExercise().getName(),
-                            entry.getSets(),
-                            entry.getReps(),
-                            entry.getWeight()
-                    )).toList();
-
-            return new WorkoutSessionResponse(
-                    session.getId(),
-                    session.getDate(),
-                    session.getWorkoutSessionStatus(),
-                    entryResponses
-            );
-        }).toList();
+        return sessions.stream().map(this::mapToWorkoutSessionResponse).toList();
     }
 
     @Transactional
     @Override
     public void deleteWorkoutById(Long sessionId) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        User user = getCurrentUser();
 
         WorkoutSession session = workoutSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", "id", sessionId));
@@ -177,5 +114,35 @@ public class WorkoutServiceImpl implements WorkoutService {
         workoutSessionRepository.delete(session);
     }
 
+    @Override
+    public List<WorkoutSessionResponse> getAllWorkouts() {
+        User user = getCurrentUser();
+        List<WorkoutSession> sessions = workoutSessionRepository.findByUser(user);
 
+        return sessions.stream().map(this::mapToWorkoutSessionResponse).toList();
+    }
+
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+    }
+
+    private WorkoutSessionResponse mapToWorkoutSessionResponse(WorkoutSession session) {
+        List<WorkoutEntryResponse> entryResponses = session.getWorkoutEntries().stream().map(entry ->
+                new WorkoutEntryResponse(
+                        entry.getExercise().getName(),
+                        entry.getSets(),
+                        entry.getReps(),
+                        entry.getWeight()
+                )
+        ).toList();
+
+        return new WorkoutSessionResponse(
+                session.getId(),
+                session.getDate(),
+                session.getWorkoutSessionStatus(),
+                entryResponses
+        );
+    }
 }

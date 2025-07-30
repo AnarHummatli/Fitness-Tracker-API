@@ -19,6 +19,19 @@ public class WorkoutController {
 
     private final WorkoutService workoutService;
 
+    @GetMapping
+    public ResponseEntity<List<WorkoutSessionResponse>> getAllWorkouts() {
+        List<WorkoutSessionResponse> responses = workoutService.getAllWorkouts();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{date}")
+    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(@PathVariable String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(parsedDate);
+        return ResponseEntity.ok(responses);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<WorkoutSessionResponse> createWorkoutSession(@RequestBody @Valid WorkoutSessionRequest request) {
         WorkoutSessionResponse response = workoutService.createWorkoutSession(request);
@@ -29,13 +42,6 @@ public class WorkoutController {
     public ResponseEntity<WorkoutSessionResponse> completeWorkout(@PathVariable Long id) {
         WorkoutSessionResponse response = workoutService.markWorkoutAsCompleted(id);
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{date}")
-    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(@PathVariable String date) {
-        LocalDate parsedDate = LocalDate.parse(date);
-        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(parsedDate);
-        return ResponseEntity.ok(responses);
     }
 
     @DeleteMapping("/{id}")
