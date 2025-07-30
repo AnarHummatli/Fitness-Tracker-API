@@ -11,6 +11,7 @@ import com.fitness.fitnesstrackerapi.repository.WorkoutEntryRepository;
 import com.fitness.fitnesstrackerapi.repository.WorkoutSessionRepository;
 import com.fitness.fitnesstrackerapi.service.WorkoutService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +84,46 @@ public class WorkoutServiceImpl implements WorkoutService {
                 savedSession.getDate(),
                 savedSession.getWorkoutSessionStatus(),
                 workoutEntryResponses
+        );
+
+    }
+
+    @Transactional
+    @Override
+    public WorkoutSessionResponse markWorkoutAsCompleted(Long sessionId) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+
+        WorkoutSession session = workoutSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", sessionId));
+
+        if (!session.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not authorized to update this workout session");
+        }
+
+        if (session.getWorkoutSessionStatus() == WorkoutSessionStatus.MISSED) {
+            throw new IllegalArgumentException("Cannot complete a missed workout session");
+        }
+
+        session.setWorkoutSessionStatus(WorkoutSessionStatus.COMPLETED);
+        workoutSessionRepository.save(session);
+
+        List<WorkoutEntryResponse> entryResponses = session.getWorkoutEntries().stream().map(entry ->
+                new WorkoutEntryResponse(
+                        entry.getExercise().getName(),
+                        entry.getSets(),
+                        entry.getReps(),
+                        entry.getWeight()
+                )).toList();
+
+        return new WorkoutSessionResponse(
+                session.getId(),
+                session.getDate(),
+                session.getWorkoutSessionStatus(),
+                entryResponses
         );
 
     }
