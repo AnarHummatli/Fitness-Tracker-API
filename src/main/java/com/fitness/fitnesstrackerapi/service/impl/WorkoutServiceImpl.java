@@ -127,4 +127,35 @@ public class WorkoutServiceImpl implements WorkoutService {
         );
 
     }
+
+    @Override
+    public List<WorkoutSessionResponse> getWorkoutsByDate(LocalDate date) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+
+        List<WorkoutSession> sessions = workoutSessionRepository.findByUserAndDate(user, date);
+
+        if (sessions.isEmpty()) {
+            throw new ResourceNotFoundException("WorkoutSession for date", date.toString());
+        }
+
+        return sessions.stream().map(session -> {
+            List<WorkoutEntryResponse> entryResponses = session.getWorkoutEntries().stream().map(entry ->
+                    new WorkoutEntryResponse(
+                            entry.getExercise().getName(),
+                            entry.getSets(),
+                            entry.getReps(),
+                            entry.getWeight()
+                    )).toList();
+
+            return new WorkoutSessionResponse(
+                    session.getId(),
+                    session.getDate(),
+                    session.getWorkoutSessionStatus(),
+                    entryResponses
+            );
+        }).toList();
+    }
+
 }

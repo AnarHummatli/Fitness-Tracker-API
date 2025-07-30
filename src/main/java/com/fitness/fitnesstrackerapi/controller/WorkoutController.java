@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/workouts")
 @RequiredArgsConstructor
@@ -27,4 +30,12 @@ public class WorkoutController {
         WorkoutSessionResponse response = workoutService.markWorkoutAsCompleted(id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{date}")
+    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(@PathVariable String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(parsedDate);
+        return ResponseEntity.ok(responses);
+    }
+
 }
