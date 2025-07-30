@@ -34,7 +34,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
         WorkoutSessionStatus status;
         LocalDate today = LocalDate.now();
@@ -56,7 +56,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         List<WorkoutEntry> entries = request.getEntries().stream().map(workoutEntryRequest -> {
             Exercise exercise = exerciseRepository.findByNameAndUser(workoutEntryRequest.getExerciseName(), user)
                     .orElseThrow(() ->
-                            new ResourceNotFoundException("Exercise", workoutEntryRequest.getExerciseName()));
+                            new ResourceNotFoundException("Exercise", "name", workoutEntryRequest.getExerciseName()));
 
             return WorkoutEntry.builder()
                     .workoutSession(savedSession)
@@ -95,10 +95,10 @@ public class WorkoutServiceImpl implements WorkoutService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
         WorkoutSession session = workoutSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", sessionId));
+                .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", "id", sessionId));
 
         if (!session.getUser().getId().equals(user.getId())) {
             throw new AccessDeniedException("You are not authorized to update this workout session");
@@ -132,12 +132,12 @@ public class WorkoutServiceImpl implements WorkoutService {
     public List<WorkoutSessionResponse> getWorkoutsByDate(LocalDate date) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
         List<WorkoutSession> sessions = workoutSessionRepository.findByUserAndDate(user, date);
 
         if (sessions.isEmpty()) {
-            throw new ResourceNotFoundException("WorkoutSession for date", date.toString());
+            throw new ResourceNotFoundException("WorkoutSession", "id", date.toString());
         }
 
         return sessions.stream().map(session -> {
@@ -157,5 +157,25 @@ public class WorkoutServiceImpl implements WorkoutService {
             );
         }).toList();
     }
+
+    @Transactional
+    @Override
+    public void deleteWorkoutById(Long sessionId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+
+        WorkoutSession session = workoutSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("WorkoutSession", "id", sessionId));
+
+        if (!session.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not authorized to delete this workout session");
+        }
+
+        workoutEntryRepository.deleteAll(session.getWorkoutEntries());
+        workoutSessionRepository.delete(session);
+    }
+
 
 }

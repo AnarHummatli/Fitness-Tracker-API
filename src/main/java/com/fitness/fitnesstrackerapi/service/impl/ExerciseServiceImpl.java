@@ -43,7 +43,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
         return exerciseRepository.findAllByUser(user)
                 .stream()
-                .map(response -> new ExerciseResponse(response.getName(),response.getDescription()))
+                .map(response -> new ExerciseResponse(response.getName(), response.getDescription()))
                 .toList();
     }
 
@@ -53,7 +53,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         User user = getCurrentUser();
 
         Exercise exercise = exerciseRepository.findByNameAndUser(name, user)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise", name));
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise", "name", name));
 
         exerciseRepository.delete(exercise);
     }
@@ -61,6 +61,6 @@ public class ExerciseServiceImpl implements ExerciseService {
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
     }
 }
