@@ -41,4 +41,12 @@ public class BodyMeasurement {
     @Positive
     @Column(nullable = false)
     private Double value;
+
+    @PrePersist
+    @PreUpdate
+    private void normalizePart() {
+        if (this.part != null) {
+            this.part = this.part.trim().toLowerCase();
+        }
+    }
 }
