@@ -1,7 +1,9 @@
 package com.fitness.fitnesstrackerapi.controller;
 
+import com.fitness.fitnesstrackerapi.exception.ResourceNotFoundException;
 import com.fitness.fitnesstrackerapi.model.dto.WorkoutSessionRequest;
 import com.fitness.fitnesstrackerapi.model.dto.WorkoutSessionResponse;
+import com.fitness.fitnesstrackerapi.model.entity.WorkoutSessionStatus;
 import com.fitness.fitnesstrackerapi.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,22 @@ public class WorkoutController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/{date}")
+    @GetMapping("/date/{date}")
     public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(@PathVariable String date) {
         LocalDate parsedDate = LocalDate.parse(date);
         List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(parsedDate);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByStatus(@PathVariable String status){
+        WorkoutSessionStatus enumStatus;
+        try {
+            enumStatus = WorkoutSessionStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("WorkoutSessionStatus", "status", status);
+        }
+        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByStatus(enumStatus);
         return ResponseEntity.ok(responses);
     }
 

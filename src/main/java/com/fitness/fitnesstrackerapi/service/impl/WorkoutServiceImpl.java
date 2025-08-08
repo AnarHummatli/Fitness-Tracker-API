@@ -11,6 +11,7 @@ import com.fitness.fitnesstrackerapi.repository.WorkoutEntryRepository;
 import com.fitness.fitnesstrackerapi.repository.WorkoutSessionRepository;
 import com.fitness.fitnesstrackerapi.service.WorkoutService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,17 @@ public class WorkoutServiceImpl implements WorkoutService {
         return sessions.stream().map(this::mapToWorkoutSessionResponse).toList();
     }
 
+    @Override
+    public List<WorkoutSessionResponse> getWorkoutsByStatus(WorkoutSessionStatus status) {
+        User user = getCurrentUser();
+        List<WorkoutSession> sessions = workoutSessionRepository.findByUserAndWorkoutSessionStatus(user, status);
+
+        return sessions.stream()
+                .map(this::mapToWorkoutSessionResponse)
+                .toList();
+    }
+
+
     @Transactional
     @Override
     public void deleteWorkoutById(Long sessionId) {
@@ -121,6 +133,26 @@ public class WorkoutServiceImpl implements WorkoutService {
 
         return sessions.stream().map(this::mapToWorkoutSessionResponse).toList();
     }
+
+    @Scheduled(cron = "0 * * * * ?")
+    @Transactional
+    public void updateMissedStatusesForAllUsers() {
+        LocalDate today = LocalDate.now();
+        List<User> allUsers = userRepository.findAll();
+
+        for (User user : allUsers) {
+            List<WorkoutSession> plannedSessions =
+                    workoutSessionRepository.findByUserAndWorkoutSessionStatus(user, WorkoutSessionStatus.PLANNED);
+
+            for (WorkoutSession session : plannedSessions) {
+                if (session.getDate().isBefore(today)) {
+                    session.setWorkoutSessionStatus(WorkoutSessionStatus.MISSED);
+                    workoutSessionRepository.save(session);
+                }
+            }
+        }
+    }
+
 
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
