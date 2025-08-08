@@ -1,4 +1,4 @@
-package com.fitness.fitnesstrackerapi.model.dto;
+package com.fitness.fitnesstrackerapi.model.dto.request;
 
 import com.fitness.fitnesstrackerapi.model.entity.Gender;
 import jakarta.validation.constraints.*;

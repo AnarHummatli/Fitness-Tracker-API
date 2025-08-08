@@ -1,6 +1,9 @@
 package com.fitness.fitnesstrackerapi.service;
 
-import com.fitness.fitnesstrackerapi.model.dto.*;
+import com.fitness.fitnesstrackerapi.model.dto.request.BodyMeasurementRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.BodyMeasurementResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.CompareResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.ProgressResponse;
 
 import java.time.LocalDate;
 import java.util.List;

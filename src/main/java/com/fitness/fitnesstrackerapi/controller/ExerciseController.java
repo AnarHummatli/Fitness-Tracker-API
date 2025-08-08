@@ -1,7 +1,7 @@
 package com.fitness.fitnesstrackerapi.controller;
 
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseRequest;
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.ExerciseRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.ExerciseResponse;
 import com.fitness.fitnesstrackerapi.service.ExerciseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

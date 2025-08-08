@@ -1,10 +1,10 @@
 package com.fitness.fitnesstrackerapi.service.impl;
 
 import com.fitness.fitnesstrackerapi.exception.ResourceNotFoundException;
-import com.fitness.fitnesstrackerapi.model.dto.BodyMeasurementRequest;
-import com.fitness.fitnesstrackerapi.model.dto.BodyMeasurementResponse;
-import com.fitness.fitnesstrackerapi.model.dto.CompareResponse;
-import com.fitness.fitnesstrackerapi.model.dto.ProgressResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.BodyMeasurementRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.BodyMeasurementResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.CompareResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.ProgressResponse;
 import com.fitness.fitnesstrackerapi.model.entity.BodyMeasurement;
 import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.repository.BodyMeasurementRepository;
@@ -62,12 +62,7 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
                 .findAllByUserOrderByDateDesc(user);
 
         return measurements.stream()
-                .map(m -> new BodyMeasurementResponse(
-                        m.getId(),
-                        m.getDate(),
-                        m.getPart(),
-                        m.getValue()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -80,12 +75,7 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
                 .findAllByUserAndPartOrderByDateDesc(user, normalizedPart);
 
         return measurements.stream()
-                .map(m -> new BodyMeasurementResponse(
-                        m.getId(),
-                        m.getDate(),
-                        m.getPart(),
-                        m.getValue()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -97,12 +87,7 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
                 .findAllByUserAndDate(user, date);
 
         return measurements.stream()
-                .map(m -> new BodyMeasurementResponse(
-                        m.getId(),
-                        m.getDate(),
-                        m.getPart(),
-                        m.getValue()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -111,20 +96,15 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
         User user = getCurrentUser();
         String normalizedPart = normalizePart(part);
 
-        List<BodyMeasurement> measurements = bodyMeasurementRepository
-                .findAllByUserAndPartAndDateBetweenOrderByDateAsc(user, normalizedPart, from, to);
-
         if (from.isAfter(to)) {
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
 
+        List<BodyMeasurement> measurements = bodyMeasurementRepository
+                .findAllByUserAndPartAndDateBetweenOrderByDateAsc(user, normalizedPart, from, to);
+
         return measurements.stream()
-                .map(m -> new BodyMeasurementResponse(
-                        m.getId(),
-                        m.getDate(),
-                        m.getPart(),
-                        m.getValue()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -167,12 +147,12 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
         User user = getCurrentUser();
         String normalizedPart = normalizePart(part);
 
-        List<BodyMeasurement> measurements = bodyMeasurementRepository
-                .findAllByUserAndPartAndDateBetweenOrderByDateAsc(user, normalizedPart, from, to);
-
         if (from.isAfter(to)) {
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
+
+        List<BodyMeasurement> measurements = bodyMeasurementRepository
+                .findAllByUserAndPartAndDateBetweenOrderByDateAsc(user, normalizedPart, from, to);
 
         if (measurements.isEmpty()) {
             throw new ResourceNotFoundException("BodyMeasurement", "range", normalizedPart);
@@ -215,6 +195,16 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
     }
+
+    private BodyMeasurementResponse toResponse(BodyMeasurement m) {
+        return new BodyMeasurementResponse(
+                m.getId(),
+                m.getDate(),
+                m.getPart(),
+                m.getValue()
+        );
+    }
+
 
     private String normalizePart(String part) {
         return part.trim().toLowerCase();

@@ -1,9 +1,9 @@
 package com.fitness.fitnesstrackerapi.controller;
 
-import com.fitness.fitnesstrackerapi.model.dto.BodyMeasurementRequest;
-import com.fitness.fitnesstrackerapi.model.dto.BodyMeasurementResponse;
-import com.fitness.fitnesstrackerapi.model.dto.CompareResponse;
-import com.fitness.fitnesstrackerapi.model.dto.ProgressResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.BodyMeasurementRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.BodyMeasurementResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.CompareResponse;
+import com.fitness.fitnesstrackerapi.model.dto.response.ProgressResponse;
 import com.fitness.fitnesstrackerapi.service.BodyMeasurementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

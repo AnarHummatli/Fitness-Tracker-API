@@ -1,4 +1,4 @@
-package com.fitness.fitnesstrackerapi.model.dto;
+package com.fitness.fitnesstrackerapi.model.dto.response;
 
 import lombok.*;
 

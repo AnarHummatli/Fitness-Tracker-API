@@ -1,8 +1,8 @@
 package com.fitness.fitnesstrackerapi.controller;
 
-import com.fitness.fitnesstrackerapi.model.dto.AuthResponse;
-import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
-import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.AuthResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.LoginRequest;
+import com.fitness.fitnesstrackerapi.model.dto.request.RegisterRequest;
 import com.fitness.fitnesstrackerapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

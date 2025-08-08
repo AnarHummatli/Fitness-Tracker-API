@@ -1,8 +1,8 @@
 package com.fitness.fitnesstrackerapi.service.impl;
 
 import com.fitness.fitnesstrackerapi.exception.ResourceNotFoundException;
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseRequest;
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.ExerciseRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.ExerciseResponse;
 import com.fitness.fitnesstrackerapi.model.entity.Exercise;
 import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.repository.ExerciseRepository;

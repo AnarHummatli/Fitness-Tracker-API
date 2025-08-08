@@ -1,4 +1,4 @@
-package com.fitness.fitnesstrackerapi.model.dto;
+package com.fitness.fitnesstrackerapi.model.dto.response;
 
 import com.fitness.fitnesstrackerapi.model.entity.WorkoutSessionStatus;
 import lombok.AllArgsConstructor;

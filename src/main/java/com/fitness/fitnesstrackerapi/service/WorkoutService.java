@@ -1,7 +1,7 @@
 package com.fitness.fitnesstrackerapi.service;
 
-import com.fitness.fitnesstrackerapi.model.dto.WorkoutSessionRequest;
-import com.fitness.fitnesstrackerapi.model.dto.WorkoutSessionResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.WorkoutSessionRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.WorkoutSessionResponse;
 import com.fitness.fitnesstrackerapi.model.entity.WorkoutSessionStatus;
 
 import java.time.LocalDate;

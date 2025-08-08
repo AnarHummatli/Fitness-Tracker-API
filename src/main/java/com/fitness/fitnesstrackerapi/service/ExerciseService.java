@@ -1,7 +1,7 @@
 package com.fitness.fitnesstrackerapi.service;
 
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseRequest;
-import com.fitness.fitnesstrackerapi.model.dto.ExerciseResponse;
+import com.fitness.fitnesstrackerapi.model.dto.request.ExerciseRequest;
+import com.fitness.fitnesstrackerapi.model.dto.response.ExerciseResponse;
 
 import java.util.List;
 

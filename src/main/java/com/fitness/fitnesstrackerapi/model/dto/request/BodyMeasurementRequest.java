@@ -1,4 +1,4 @@
-package com.fitness.fitnesstrackerapi.model.dto;
+package com.fitness.fitnesstrackerapi.model.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

@@ -1,15 +1,15 @@
-package com.fitness.fitnesstrackerapi.model.dto;
+package com.fitness.fitnesstrackerapi.model.dto.response;
 
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompareResponse {
+public class ProgressResponse {
 
     private String part;
     private Double startValue;
-    private Double endValue;
+    private Double currentValue;
     private Double difference;
     private Double percentageChange;
     private Long daysTracked;

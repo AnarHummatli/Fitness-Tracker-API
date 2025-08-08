@@ -2,8 +2,8 @@ package com.fitness.fitnesstrackerapi.service.impl;
 
 import com.fitness.fitnesstrackerapi.exception.EmailAlreadyExistsException;
 import com.fitness.fitnesstrackerapi.exception.InvalidCredentialsException;
-import com.fitness.fitnesstrackerapi.model.dto.LoginRequest;
-import com.fitness.fitnesstrackerapi.model.dto.RegisterRequest;
+import com.fitness.fitnesstrackerapi.model.dto.request.LoginRequest;
+import com.fitness.fitnesstrackerapi.model.dto.request.RegisterRequest;
 import com.fitness.fitnesstrackerapi.model.entity.User;
 import com.fitness.fitnesstrackerapi.repository.UserRepository;
 import com.fitness.fitnesstrackerapi.security.JwtService;
