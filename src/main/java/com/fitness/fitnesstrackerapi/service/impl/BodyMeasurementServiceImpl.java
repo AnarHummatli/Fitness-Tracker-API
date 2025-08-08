@@ -33,7 +33,7 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
         }
 
         if (bodyMeasurementRepository.existsByUserAndDateAndPart(user, request.getDate(), request.getPart())) {
-            throw new IllegalStateException("Measurement for this part and date already exists.");
+            throw new IllegalArgumentException("Measurement for this part and date already exists.");
         }
 
         BodyMeasurement measurement = BodyMeasurement.builder()
@@ -52,6 +52,41 @@ public class BodyMeasurementServiceImpl implements BodyMeasurementService {
                 saved.getValue()
         );
 
+    }
+
+    @Override
+    public List<BodyMeasurementResponse> getAllMeasurements() {
+        User user = getCurrentUser();
+
+        List<BodyMeasurement> measurements = bodyMeasurementRepository
+                .findAllByUserOrderByDateDesc(user);
+
+        return measurements.stream()
+                .map(m -> new BodyMeasurementResponse(
+                        m.getId(),
+                        m.getDate(),
+                        m.getPart(),
+                        m.getValue()
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<BodyMeasurementResponse> getAllMeasurementsForPart(String part) {
+        User user = getCurrentUser();
+        String normalizedPart = normalizePart(part);
+
+        List<BodyMeasurement> measurements = bodyMeasurementRepository
+                .findAllByUserAndPartOrderByDateDesc(user, normalizedPart);
+
+        return measurements.stream()
+                .map(m -> new BodyMeasurementResponse(
+                        m.getId(),
+                        m.getDate(),
+                        m.getPart(),
+                        m.getValue()
+                ))
+                .toList();
     }
 
     @Override
