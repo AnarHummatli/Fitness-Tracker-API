@@ -6,4 +6,5 @@ import com.fitness.fitnesstrackerapi.model.dto.request.RegisterRequest;
 public interface UserService {
     String registerUser(RegisterRequest request);
     String loginUser(LoginRequest loginRequest);
+    void deleteUserByEmail(String email);
 }

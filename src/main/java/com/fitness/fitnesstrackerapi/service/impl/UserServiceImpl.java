@@ -2,6 +2,7 @@ package com.fitness.fitnesstrackerapi.service.impl;
 
 import com.fitness.fitnesstrackerapi.exception.EmailAlreadyExistsException;
 import com.fitness.fitnesstrackerapi.exception.InvalidCredentialsException;
+import com.fitness.fitnesstrackerapi.exception.ResourceNotFoundException;
 import com.fitness.fitnesstrackerapi.model.dto.request.LoginRequest;
 import com.fitness.fitnesstrackerapi.model.dto.request.RegisterRequest;
 import com.fitness.fitnesstrackerapi.model.entity.User;
@@ -65,4 +66,10 @@ public class UserServiceImpl implements UserService {
         return jwtService.generateToken(user.getEmail());
     }
 
+    @Override
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User","email",email));
+        userRepository.delete(user);
+    }
 }
