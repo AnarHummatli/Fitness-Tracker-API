@@ -1,5 +1,7 @@
 package com.fitness.fitnesstrackerapi.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -65,6 +67,38 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleIllegalState(IllegalStateException ex) {
         return buildResponse(HttpStatus.CONFLICT, "Conflict", ex.getMessage());
     }
+
+    @ExceptionHandler({DataIntegrityViolationException.class, ConstraintViolationException.class})
+    public ResponseEntity<Object> handleUniqueConstraintViolation(Exception ex) {
+        String message = "Duplicate entry. This record already exists.";
+
+        Throwable rootCause = ex.getCause();
+        while (rootCause != null) {
+            String causeMessage = rootCause.getMessage();
+
+            if (causeMessage != null && causeMessage.contains("duplicate key value violates unique constraint")) {
+                if (causeMessage.contains("(user_id, start_date)=")) {
+                    int start = causeMessage.indexOf("(user_id, start_date)=") + "(user_id, start_date)=".length();
+                    int end = causeMessage.indexOf(")", start);
+                    if (start > -1 && end > -1) {
+                        String values = causeMessage.substring(start, end).replace("(", "").replace(")", "");
+                        String[] parts = values.split(",\\s*");
+                        if (parts.length == 2) {
+                            String userId = parts[0];
+                            String startDate = parts[1];
+                            message = "User ID " + userId + " üçün " + startDate + " tarixində artıq məlumat mövcuddur.";
+                        }
+                    }
+                } else {
+                    message = "A record with the same unique values already exists.";
+                }
+                break;
+            }
+            rootCause = rootCause.getCause();
+        }
+        return buildResponse(HttpStatus.CONFLICT, "Unique Constraint Violation", message);
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
