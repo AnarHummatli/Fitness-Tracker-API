@@ -49,6 +49,21 @@ public class GoalProgressEntryServiceImpl implements GoalProgressEntryService {
     }
 
     @Override
+    public List<GoalProgressEntryResponse> getAllProgressEntries() {
+        User currentUser = getCurrentUser();
+
+        List<Goal> userGoals = goalRepository.findByUserId(currentUser.getId());
+
+        List<GoalProgressEntry> allEntries = userGoals.stream()
+                .flatMap(goal -> progressEntryRepository.findByGoalId(goal.getId()).stream())
+                .toList();
+
+        return allEntries.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
     public List<GoalProgressEntryResponse> getProgressEntriesByGoalId(Long goalId) {
         User currentUser = getCurrentUser();
 

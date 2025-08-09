@@ -7,6 +7,7 @@ import com.fitness.fitnesstrackerapi.model.entity.WorkoutSessionStatus;
 import com.fitness.fitnesstrackerapi.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,9 @@ public class WorkoutController {
     }
 
     @GetMapping("/date/{date}")
-    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(@PathVariable String date) {
-        LocalDate parsedDate = LocalDate.parse(date);
-        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(parsedDate);
+    public ResponseEntity<List<WorkoutSessionResponse>> getWorkoutsByDate(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<WorkoutSessionResponse> responses = workoutService.getWorkoutsByDate(date);
         return ResponseEntity.ok(responses);
     }
 

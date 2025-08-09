@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface GoalProgressEntryService {
     GoalProgressEntryResponse addProgressEntry(GoalProgressEntryRequest request);
+    List<GoalProgressEntryResponse> getAllProgressEntries();
     List<GoalProgressEntryResponse> getProgressEntriesByGoalId(Long goalId);
     List<GoalProgressEntryResponse> getProgressEntriesByGoalDate(LocalDate date);
     void deleteProgressEntry(Long id);

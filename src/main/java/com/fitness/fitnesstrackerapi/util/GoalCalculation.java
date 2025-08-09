@@ -6,6 +6,7 @@ import com.fitness.fitnesstrackerapi.model.entity.GoalStatus;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,6 +41,9 @@ public class GoalCalculation {
     }
 
     private static double calculateCurrentValue(List<GoalProgressEntry> entries, double defaultValue) {
+        if (entries == null) {
+            entries = new ArrayList<>();
+        }
         return entries.stream()
                 .max(Comparator.comparing(GoalProgressEntry::getDate))
                 .map(GoalProgressEntry::getValue)
@@ -54,7 +58,7 @@ public class GoalCalculation {
     }
 
     private static GoalStatus determineStatus(Goal goal, double currentValue, LocalDate today) {
-        if (currentValue >= goal.getTargetValue()) {
+        if (currentValue == goal.getTargetValue()) {
             return GoalStatus.COMPLETED;
         } else if (today.isAfter(goal.getEndDate())) {
             return GoalStatus.FAILED;
