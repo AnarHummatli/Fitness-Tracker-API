@@ -1,0 +1,11 @@
+package com.fitness.fitnesstrackerapi.repository;
+
+import com.fitness.fitnesstrackerapi.model.entity.StepStreak;
+import com.fitness.fitnesstrackerapi.model.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface StepStreakRepository extends JpaRepository<StepStreak, Long> {
+    Optional<StepStreak> findByUser(User user);
+}
