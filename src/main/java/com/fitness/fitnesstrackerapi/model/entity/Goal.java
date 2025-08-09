@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "goals")
+@Table(name = "goals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "type"})})
 public class Goal {
 
     @Id
@@ -31,7 +31,7 @@ public class Goal {
     private User user;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 100)
     @Column(nullable = false)
     private String type;
 
